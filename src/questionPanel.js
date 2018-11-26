@@ -121,6 +121,11 @@ class QuestionPanel extends React.Component {
       case 'SUBMIT':
         this.props.onSubmit(action.target);
         break;
+
+      case 'SUBMIT-GOTO':
+        this.props.onSubmit(action.target);
+        this.props.onSwitchPanel(action.panel);
+        break;
     }
   }
 
