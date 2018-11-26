@@ -95,7 +95,7 @@ class Winterfell extends React.Component {
 
   handleSubmit(action) {
     if (this.props.disableSubmit) {
-      this.props.onSubmit(this.state.questionAnswers, action);
+      this.props.onSubmit(this.state.questionAnswers, action, this.handleSwitchPanel.bind(this));
       return;
     }
 
