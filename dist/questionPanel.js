@@ -110,10 +110,21 @@ var QuestionPanel = (function (_React$Component) {
        * Panel is valid. So what do we do next?
        * Check our conditions and act upon them, or the default.
        */
-      conditions.forEach(function (condition) {
-        var answer = _this2.props.questionAnswers[condition.questionId];
+      // conditions
+      //   .forEach(condition => {
+      //     var answer = this.props.questionAnswers[condition.questionId];
 
-        action = answer == condition.value ? {
+      //     action = answer == condition.value
+      //                ? {
+      //                    action : condition.action,
+      //                    target : condition.target
+      //                  }
+      //                : action;
+      //   });
+      conditions.forEach(function (condition) {
+        var conditionMet = typeof condition.predicates !== 'undefined' ? _this2.handleEvaluatePredicate(condition.predicates) : _this2.props.questionAnswers[condition.questionId] === condition.value;
+
+        action = conditionMet ? {
           action: condition.action,
           target: condition.target
         } : action;
@@ -138,6 +149,18 @@ var QuestionPanel = (function (_React$Component) {
           this.props.onSwitchPanel(action.panel);
           break;
       }
+    }
+  }, {
+    key: 'handleEvaluatePredicate',
+    value: function handleEvaluatePredicate(predicateSet) {
+      var _this3 = this;
+
+      var conditionsMet = true;
+      predicateSet.forEach(function (set) {
+        conditionsMet = !conditionsMet ? conditionsMet : _this3.props.questionAnswers[set.questionId] === set.value;
+      });
+
+      return conditionsMet;
     }
   }, {
     key: 'handleBackButtonClick',
@@ -179,10 +202,10 @@ var QuestionPanel = (function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var questionSets = this.props.questionSets.map(function (questionSetMeta) {
-        var questionSet = _.find(_this3.props.schema.questionSets, {
+        var questionSet = _.find(_this4.props.schema.questionSets, {
           questionSetId: questionSetMeta.questionSetId
         });
 
@@ -196,14 +219,14 @@ var QuestionPanel = (function (_React$Component) {
           questionSetHeader: questionSet.questionSetHeader,
           questionSetText: questionSet.questionSetText,
           questions: questionSet.questions,
-          classes: _this3.props.classes,
-          questionAnswers: _this3.props.questionAnswers,
-          renderError: _this3.props.renderError,
-          renderRequiredAsterisk: _this3.props.renderRequiredAsterisk,
-          validationErrors: _this3.state.validationErrors,
-          onAnswerChange: _this3.handleAnswerChange.bind(_this3),
-          onQuestionBlur: _this3.handleQuestionBlur.bind(_this3),
-          onKeyDown: _this3.handleInputKeyDown.bind(_this3) });
+          classes: _this4.props.classes,
+          questionAnswers: _this4.props.questionAnswers,
+          renderError: _this4.props.renderError,
+          renderRequiredAsterisk: _this4.props.renderRequiredAsterisk,
+          validationErrors: _this4.state.validationErrors,
+          onAnswerChange: _this4.handleAnswerChange.bind(_this4),
+          onQuestionBlur: _this4.handleQuestionBlur.bind(_this4),
+          onKeyDown: _this4.handleInputKeyDown.bind(_this4) });
       });
 
       return React.createElement(
