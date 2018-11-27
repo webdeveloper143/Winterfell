@@ -132,6 +132,51 @@ Supported actions are `GOTO` and `SUBMIT`. When using `GOTO`, the `target` can b
 }
 ```
 
+##### Predicates
+
+Alternatively, actions can have predicates to describe conditions.
+
+```json
+"action": {
+  "conditions": [
+    {
+      "predicates": [
+        {
+          "questionId": "age",
+          "type": "GREATER_THAN",
+          "value": "20"
+        },
+        {
+          "questionId": "name",
+          "type": "EQUALS", //default, can be omitted
+          "value": "Jane"
+        }
+      ],
+      "action": "GOTO",
+      "target": "ask-more-questions"
+    }
+  ],
+  "default": {
+    "action": "GOTO",
+    "target": "final-panel"
+  }
+}
+```
+
+Predicates are combined with AND condition - all predicates must be met.
+
+Available predicate types:
+  - EXISTS
+  - DOES_NOT_EXIST
+  - EQUALS
+  - NOT_EQUALS
+  - GREATER_THAN
+  - LESS_THAN
+  - LESS_THAN_OR_EQUALS
+  - GREATER_THAN_OR_EQUALS
+
+Default predicate type is EQUALS
+
 #### Question Sets
 
 Questions Sets are groups of questions. Here is where you define questions with their validations, types, conditions etc. `conditionalQuestions` are recursive and will work as expected.
