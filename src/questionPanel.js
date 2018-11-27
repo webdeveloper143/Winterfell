@@ -7,6 +7,7 @@ var ErrorMessages = require('./lib/errors');
 
 var Button = require('./button');
 var QuestionSet = require('./questionSet');
+var evaluatePredicates = require('./lib/evaluatePredicates');
 
 class QuestionPanel extends React.Component {
 
@@ -109,7 +110,7 @@ class QuestionPanel extends React.Component {
     //   });
     conditions
       .forEach(condition => {
-        var conditionMet = typeof condition.predicates !== 'undefined'
+        var conditionMet = Array.isArray(condition.predicates)
           ? this.handleEvaluatePredicate(condition.predicates)
           : this.props.questionAnswers[condition.questionId] === condition.value;
 
@@ -143,16 +144,8 @@ class QuestionPanel extends React.Component {
     }
   }
 
-  handleEvaluatePredicate(predicateSet) {
-    var conditionsMet = true;
-    predicateSet
-      .forEach(set => {
-        conditionsMet = (!conditionsMet
-          ? conditionsMet
-          : this.props.questionAnswers[set.questionId] === set.value);
-      });
-
-    return conditionsMet;
+  handleEvaluatePredicate(predicates) {
+    return evaluatePredicates(predicates, this.props.questionAnswers);
   }
 
   handleBackButtonClick() {
