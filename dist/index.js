@@ -161,7 +161,9 @@ var Winterfell = (function (_React$Component) {
             onAnswerChange: this.handleAnswerChange.bind(this),
             onPanelBack: this.handleBackButtonClick.bind(this),
             onSwitchPanel: this.handleSwitchPanel.bind(this),
-            onSubmit: this.handleSubmit.bind(this) })
+            onSubmit: this.handleSubmit.bind(this),
+            onValidationErrors: this.props.onValidationErrors
+          })
         )
       );
     }

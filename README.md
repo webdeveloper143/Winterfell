@@ -460,11 +460,11 @@ The following events can be registered as props of Winterfell.
 
 Event Prop | Description | Arguments
 --- | --- | ---
-onRender      | Fired when Winterfell has initially rendered   | N/A
-onUpdate      | Fired when a questions answer has been changed | `questionAnswers`
-onSwitchPanel | Fired when a panel is switched or changed      | `panel`
-onSubmit      | Fired when the form is submitted successfully  | `questionAnswers`, `action`
-
+onRender              | Fired when Winterfell has initially rendered   | N/A
+onUpdate              | Fired when a questions answer has been changed | `questionAnswers`
+onSwitchPanel         | Fired when a panel is switched or changed      | `panel`
+onSubmit              | Fired when the form is submitted successfully  | `questionAnswers`, `action`
+onValidationErrors    | Fired when validationErrors change             | `validationErrors`, `isActionAttempt` (main action button click)
 
 
 ## Final Notes

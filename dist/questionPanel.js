@@ -61,6 +61,8 @@ var QuestionPanel = (function (_React$Component) {
 
       this.setState({
         validationErrors: validationErrors
+      }, function () {
+        return _this.handleValidationErrors(false);
       });
     }
   }, {
@@ -103,6 +105,8 @@ var QuestionPanel = (function (_React$Component) {
 
         this.setState({
           validationErrors: validationErrors
+        }, function () {
+          return _this2.handleValidationErrors(true);
         });
         return;
       }
@@ -111,17 +115,6 @@ var QuestionPanel = (function (_React$Component) {
        * Panel is valid. So what do we do next?
        * Check our conditions and act upon them, or the default.
        */
-      // conditions
-      //   .forEach(condition => {
-      //     var answer = this.props.questionAnswers[condition.questionId];
-
-      //     action = answer == condition.value
-      //                ? {
-      //                    action : condition.action,
-      //                    target : condition.target
-      //                  }
-      //                : action;
-      //   });
       conditions.forEach(function (condition) {
         var conditionMet = Array.isArray(condition.predicates) ? _this2.handleEvaluatePredicate(condition.predicates) : _this2.props.questionAnswers[condition.questionId] === condition.value;
 
@@ -149,6 +142,14 @@ var QuestionPanel = (function (_React$Component) {
           this.props.onSubmit(action.target);
           this.props.onSwitchPanel(action.panel);
           break;
+      }
+    }
+  }, {
+    key: 'handleValidationErrors',
+    value: function handleValidationErrors(isActionAttempt) {
+      var onValidationErrors = this.props.onValidationErrors;
+      if (typeof onValidationErrors === 'function') {
+        onValidationErrors(this.state.validationErrors, isActionAttempt);
       }
     }
   }, {

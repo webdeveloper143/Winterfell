@@ -50,7 +50,7 @@ class QuestionPanel extends React.Component {
 
     this.setState({
       validationErrors: validationErrors
-    });
+    }, () => this.handleValidationErrors(false));
   }
 
   handleMainButtonClick() {
@@ -89,7 +89,7 @@ class QuestionPanel extends React.Component {
 
       this.setState({
         validationErrors: validationErrors
-      });
+      }, () => this.handleValidationErrors(true));
       return;
     }
 
@@ -97,17 +97,6 @@ class QuestionPanel extends React.Component {
      * Panel is valid. So what do we do next?
      * Check our conditions and act upon them, or the default.
      */
-    // conditions
-    //   .forEach(condition => {
-    //     var answer = this.props.questionAnswers[condition.questionId];
-
-    //     action = answer == condition.value
-    //                ? {
-    //                    action : condition.action,
-    //                    target : condition.target
-    //                  }
-    //                : action;
-    //   });
     conditions
       .forEach(condition => {
         var conditionMet = Array.isArray(condition.predicates)
@@ -141,6 +130,13 @@ class QuestionPanel extends React.Component {
         this.props.onSubmit(action.target);
         this.props.onSwitchPanel(action.panel);
         break;
+    }
+  }
+
+  handleValidationErrors(isActionAttempt) {
+    const onValidationErrors = this.props.onValidationErrors;
+    if (typeof onValidationErrors === 'function') {
+      onValidationErrors(this.state.validationErrors, isActionAttempt);
     }
   }
 
