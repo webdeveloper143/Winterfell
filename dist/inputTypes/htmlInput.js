@@ -10,56 +10,56 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 
 var React = require('react');
 
-var Button = (function (_React$Component) {
-  _inherits(Button, _React$Component);
+var HtmlInput = (function (_React$Component) {
+  _inherits(HtmlInput, _React$Component);
 
-  function Button() {
-    _classCallCheck(this, Button);
+  function HtmlInput(props) {
+    _classCallCheck(this, HtmlInput);
 
-    _get(Object.getPrototypeOf(Button.prototype), 'constructor', this).apply(this, arguments);
+    _get(Object.getPrototypeOf(HtmlInput.prototype), 'constructor', this).call(this, props);
+    this.state = {
+      text: this.props.text
+    };
   }
 
-  _createClass(Button, [{
-    key: 'handleClick',
-    value: function handleClick(e) {
-      e.preventDefault();
-
-      this.props.onClick();
+  _createClass(HtmlInput, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (this.props.text !== nextProps.text) {
+        this.setState({ text: nextProps.text }, this.props.onChange.bind(null, nextProps.text));
+      }
+    }
+  }, {
+    key: 'createMarkup',
+    value: function createMarkup(panelHtml) {
+      return { __html: panelHtml };
     }
   }, {
     key: 'render',
     value: function render() {
-      var text = this.props.text;
-      if (this.props.condition.field !== '' && this.props.condition.value !== '') {
-        if (this.props.questionAnswers[this.props.condition.field] !== undefined && this.props.condition.value.indexOf(this.props.questionAnswers[this.props.condition.field]) > -1) {
-          text = this.props.condition.text;
-        }
-      }
       return React.createElement(
-        'button',
-        { href: '#',
-          className: this.props.className,
-          onClick: this.handleClick.bind(this) },
-        text
+        React.Fragment,
+        null,
+        typeof this.state.text !== 'undefined' ? React.createElement('div', { dangerouslySetInnerHTML: this.createMarkup(this.state.text) }) : ""
       );
     }
   }]);
 
-  return Button;
+  return HtmlInput;
 })(React.Component);
 
 ;
 
-Button.defaultProps = {
-  text: 'Submit',
-  className: undefined,
-  onClick: function onClick() {},
-  condition: {
-    field: '',
-    text: '',
-    value: ''
-  },
-  questionAnswers: {}
+HtmlInput.defaultProps = {
+  classes: {},
+  name: '',
+  id: '',
+  value: '',
+  text: '',
+  placeholder: '',
+  onChange: function onChange() {},
+  onBlur: function onBlur() {},
+  onKeyDown: function onKeyDown() {}
 };
 
-module.exports = Button;
+module.exports = HtmlInput;

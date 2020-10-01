@@ -27,31 +27,89 @@ var QuestionSet = (function (_React$Component) {
     value: function render() {
       var _this = this;
 
+      var mappingConditionalItems = [];
       var questions = this.props.questions.map(function (question) {
-        return React.createElement(Question, { key: question.questionId,
-          questionSetId: _this.props.id,
-          questionId: question.questionId,
-          question: question.question,
-          validateOn: question.validateOn,
-          validations: question.validations,
-          text: question.text,
-          postText: question.postText,
-          value: _this.props.questionAnswers[question.questionId],
-          input: question.input,
-          classes: _this.props.classes,
-          renderError: _this.props.renderError,
-          renderRequiredAsterisk: _this.props.renderRequiredAsterisk,
-          questionAnswers: _this.props.questionAnswers,
-          validationErrors: _this.props.validationErrors,
-          onAnswerChange: _this.props.onAnswerChange,
-          onQuestionBlur: _this.props.onQuestionBlur,
-          onKeyDown: _this.props.onKeyDown });
+        if (typeof question.mappingConditions !== 'undefined') {
+          var _ret = (function () {
+            var isSatisfied = 0;
+            question.mappingConditions.forEach(function (condition) {
+              var conditionCount = 0;
+              var conditionSuccessCount = 0;
+              Object.keys(condition).forEach(function (questionId) {
+                conditionCount += 1;
+                if (_this.props.questionAnswers[questionId] !== undefined) {
+                  if (Array.isArray(condition[questionId]) && Array.isArray(_this.props.questionAnswers[questionId]) && _.intersection(condition[questionId], _this.props.questionAnswers[questionId]).length > 0) {
+                    conditionSuccessCount += 1;
+                  } else if (Array.isArray(condition[questionId]) && condition[questionId].indexOf(_this.props.questionAnswers[questionId]) > -1) {
+                    conditionSuccessCount += 1;
+                  } else if (!Array.isArray(condition[questionId]) && condition[questionId] === _this.props.questionAnswers[questionId]) {
+                    conditionSuccessCount += 1;
+                  }
+                }
+              });
+              if (conditionCount === conditionSuccessCount) {
+                isSatisfied++;
+              }
+            });
+            if (isSatisfied) {
+              mappingConditionalItems.push(React.createElement(Question, { key: question.questionId,
+                questionSetId: _this.props.id,
+                questionContainerClass: question.questionContainerClass,
+                questionId: question.questionId,
+                question: question.question,
+                validateOn: question.validateOn,
+                validations: question.validations,
+                text: question.text,
+                postText: question.postText,
+                value: _this.props.questionAnswers[question.questionId],
+                input: question.input,
+                displayConfirmationNeed: question.displayConfirmationNeed,
+                classes: _this.props.classes,
+                renderError: _this.props.renderError,
+                renderRequiredAsterisk: _this.props.renderRequiredAsterisk,
+                questionAnswers: _this.props.questionAnswers,
+                validationErrors: _this.props.validationErrors,
+                onAnswerChange: _this.props.onAnswerChange,
+                onQuestionBlur: _this.props.onQuestionBlur,
+                onKeyDown: _this.props.onKeyDown }));
+            }
+            return {
+              v: ''
+            };
+          })();
+
+          if (typeof _ret === 'object') return _ret.v;
+        } else {
+          return React.createElement(Question, { key: question.questionId,
+            questionSetId: _this.props.id,
+            questionContainerClass: question.questionContainerClass,
+            questionId: question.questionId,
+            question: question.question,
+            validateOn: question.validateOn,
+            validations: question.validations,
+            text: question.text,
+            postText: question.postText,
+            value: _this.props.questionAnswers[question.questionId],
+            input: question.input,
+            displayConfirmationNeed: question.displayConfirmationNeed,
+            classes: _this.props.classes,
+            renderError: _this.props.renderError,
+            renderRequiredAsterisk: _this.props.renderRequiredAsterisk,
+            questionAnswers: _this.props.questionAnswers,
+            validationErrors: _this.props.validationErrors,
+            onAnswerChange: _this.props.onAnswerChange,
+            onQuestionBlur: _this.props.onQuestionBlur,
+            onKeyDown: _this.props.onKeyDown });
+        }
       });
 
+      function createMarkup(questionSetHtml) {
+        return { __html: questionSetHtml };
+      }
       return React.createElement(
         'div',
-        { className: this.props.classes.questionSet },
-        typeof this.props.questionSetHeader !== 'undefined' || typeof this.props.questionSetText !== 'undefined' ? React.createElement(
+        { className: this.props.classes.questionSet + this.props.questionSetClass },
+        typeof this.props.questionSetHeader !== 'undefined' || typeof this.props.questionSetText !== 'undefined' || typeof this.props.questionSetHtml !== 'undefined' ? React.createElement(
           'div',
           { className: this.props.classes.questionSetHeaderContainer },
           typeof this.props.questionSetHeader !== 'undefined' ? React.createElement(
@@ -63,9 +121,11 @@ var QuestionSet = (function (_React$Component) {
             'p',
             { className: this.props.classes.questionSetText },
             this.props.questionSetText
-          ) : undefined
+          ) : undefined,
+          typeof this.props.questionSetHtml !== 'undefined' ? React.createElement('div', { dangerouslySetInnerHTML: createMarkup(this.props.questionSetHtml) }) : undefined
         ) : undefined,
-        questions
+        questions,
+        mappingConditionalItems
       );
     }
   }]);
@@ -80,9 +140,11 @@ QuestionSet.defaultProps = {
   name: '',
   questionSetHeader: undefined,
   questionSetText: undefined,
+  questionSetHtml: undefined,
   questions: [],
   questionAnswers: {},
   classes: {},
+  questionSetClass: '',
   validationErrors: {},
   renderError: undefined,
   renderRequiredAsterisk: undefined,

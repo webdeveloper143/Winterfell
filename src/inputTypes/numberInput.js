@@ -1,19 +1,19 @@
 var React = require('react');
 
-class TextInput extends React.Component {
+class NumberInput extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       value : this.props.value
     };
   }
 
   handleChange(e) {
-    var value = e.target.value.trim();
     this.setState({
       value : e.target.value
-    }, this.props.onChange.bind(null, value));
+    }, this.props.onChange.bind(null, e.target.value));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -24,7 +24,7 @@ class TextInput extends React.Component {
 
   render() {
     return (
-      <input type="text"
+      <input type="number"
              name={this.props.name}
              id={this.props.id}
              aria-labelledby={this.props.labelId}
@@ -35,14 +35,14 @@ class TextInput extends React.Component {
                          ? 'required'
                          : undefined}
              onChange={this.handleChange.bind(this)}
-             onBlur={this.props.onBlur.bind(null, this.state.value.trim())}
+             onBlur={this.props.onBlur.bind(null, this.state.value)}
              onKeyDown={this.props.onKeyDown} />
     );
   }
 
 };
 
-TextInput.defaultProps = {
+NumberInput.defaultProps = {
   classes     : {},
   name        : '',
   id          : '',
@@ -53,4 +53,4 @@ TextInput.defaultProps = {
   onKeyDown   : () => {}
 };
 
-module.exports = TextInput;
+module.exports = NumberInput;

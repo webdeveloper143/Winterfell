@@ -10,56 +10,64 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 
 var React = require('react');
 
-var Button = (function (_React$Component) {
-  _inherits(Button, _React$Component);
+var NumberInput = (function (_React$Component) {
+  _inherits(NumberInput, _React$Component);
 
-  function Button() {
-    _classCallCheck(this, Button);
+  function NumberInput(props) {
+    _classCallCheck(this, NumberInput);
 
-    _get(Object.getPrototypeOf(Button.prototype), 'constructor', this).apply(this, arguments);
+    _get(Object.getPrototypeOf(NumberInput.prototype), 'constructor', this).call(this, props);
+
+    this.state = {
+      value: this.props.value
+    };
   }
 
-  _createClass(Button, [{
-    key: 'handleClick',
-    value: function handleClick(e) {
-      e.preventDefault();
-
-      this.props.onClick();
+  _createClass(NumberInput, [{
+    key: 'handleChange',
+    value: function handleChange(e) {
+      this.setState({
+        value: e.target.value
+      }, this.props.onChange.bind(null, e.target.value));
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (this.props.value !== nextProps.value) {
+        this.setState({ value: nextProps.value }, this.props.onChange.bind(null, nextProps.value));
+      }
     }
   }, {
     key: 'render',
     value: function render() {
-      var text = this.props.text;
-      if (this.props.condition.field !== '' && this.props.condition.value !== '') {
-        if (this.props.questionAnswers[this.props.condition.field] !== undefined && this.props.condition.value.indexOf(this.props.questionAnswers[this.props.condition.field]) > -1) {
-          text = this.props.condition.text;
-        }
-      }
-      return React.createElement(
-        'button',
-        { href: '#',
-          className: this.props.className,
-          onClick: this.handleClick.bind(this) },
-        text
-      );
+      return React.createElement('input', { type: 'number',
+        name: this.props.name,
+        id: this.props.id,
+        'aria-labelledby': this.props.labelId,
+        className: this.props.classes.input + this.props.questionInputClass,
+        placeholder: this.props.placeholder,
+        value: this.state.value,
+        required: this.props.required ? 'required' : undefined,
+        onChange: this.handleChange.bind(this),
+        onBlur: this.props.onBlur.bind(null, this.state.value),
+        onKeyDown: this.props.onKeyDown });
     }
   }]);
 
-  return Button;
+  return NumberInput;
 })(React.Component);
 
 ;
 
-Button.defaultProps = {
-  text: 'Submit',
-  className: undefined,
-  onClick: function onClick() {},
-  condition: {
-    field: '',
-    text: '',
-    value: ''
-  },
-  questionAnswers: {}
+NumberInput.defaultProps = {
+  classes: {},
+  name: '',
+  id: '',
+  value: '',
+  placeholder: '',
+  onChange: function onChange() {},
+  onBlur: function onBlur() {},
+  onKeyDown: function onKeyDown() {}
 };
 
-module.exports = Button;
+module.exports = NumberInput;

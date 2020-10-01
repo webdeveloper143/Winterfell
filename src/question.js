@@ -2,15 +2,28 @@ var React = require('react');
 var _     = require('lodash').noConflict();
 
 var InputTypes = require('./inputTypes');
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class Question extends React.Component {
 
-  handleInputChange(questionId, value) {
+  constructor(props) {
+    super(props);
+    var displayConfirmationNeed = this.props.displayConfirmationNeed;
+    if(displayConfirmationNeed && (this.props.value !== undefined && this.props.value !== '') ){
+      displayConfirmationNeed = false;
+    }
+    this.state = {
+      displayConfirmationNeed : displayConfirmationNeed,
+    };
+  }  
+
+  handleInputChange(questionId, value, progress) {
     this.props.onAnswerChange(
       questionId,
       value,
       this.props.validations,
-      this.props.validateOn
+      this.props.validateOn,
+      progress
     );
   }
 
@@ -40,6 +53,8 @@ class Question extends React.Component {
      * question.
      */
     var conditionalItems = [];
+    var conditionalAnswers = {};
+    var mappingConditionalAnswers = {};
     if (typeof this.props.input.options !== 'undefined') {
       this.props.input.options
           .filter(option => {
@@ -53,25 +68,77 @@ class Question extends React.Component {
           })
           .forEach(option =>
             [].forEach.bind(option.conditionalQuestions, conditionalQuestion => {
-              conditionalItems.push(
-                <Question key={conditionalQuestion.questionId}
-                          questionSetId={this.props.questionSetId}
-                          questionId={conditionalQuestion.questionId}
-                          question={conditionalQuestion.question}
-                          text={conditionalQuestion.text}
-                          postText={conditionalQuestion.postText}
-                          validateOn={conditionalQuestion.validateOn}
-                          validations={conditionalQuestion.validations}
-                          value={this.props.questionAnswers[conditionalQuestion.questionId]}
-                          input={conditionalQuestion.input}
-                          classes={this.props.classes}
-                          renderError={this.props.renderError}
-                          questionAnswers={this.props.questionAnswers}
-                          validationErrors={this.props.validationErrors}
-                          onAnswerChange={this.props.onAnswerChange}
-                          onQuestionBlur={this.props.onQuestionBlur}
-                          onKeyDown={this.props.onKeyDown} />
-              );
+              if (conditionalQuestion.questionSetId !== 'undefined') {
+                var QuestionSet;
+                if (this._reactInternalFiber._debugOwner !== undefined) {
+                  QuestionSet = this._reactInternalFiber._debugOwner.elementType;
+                } else {
+                  // @Todo need to change as dynamic .return.return.return
+                  QuestionSet = this._reactInternalFiber.return.return.return.elementType;
+                }
+                conditionalItems.push(
+                  <QuestionSet key={conditionalQuestion.questionSetId}
+                                id={conditionalQuestion.questionSetId}
+                                name={conditionalQuestion.name}
+                                questionSetHeader={conditionalQuestion.questionSetHeader}
+                                questionSetText={conditionalQuestion.questionSetText}
+                                questionSetHtml={conditionalQuestion.questionSetHtml}
+                                questions={conditionalQuestion.questions}
+                                questionSetClass={conditionalQuestion.questionSetClass}
+                                classes={this.props.classes}
+                                questionAnswers={this.props.questionAnswers}
+                                renderError={this.props.renderError}
+                                renderRequiredAsterisk={this.props.renderRequiredAsterisk}
+                                validationErrors={this.props.validationErrors}
+                                onAnswerChange={this.props.onAnswerChange}
+                                onQuestionBlur={this.props.onQuestionBlur}
+                                onKeyDown={this.props.onKeyDown} />
+                );
+              } else {
+                conditionalItems.push(
+                  <Question key={conditionalQuestion.questionId}
+                            questionSetId={this.props.questionSetId}
+                            questionContainerClass={conditionalQuestion.questionContainerClass}
+                            questionId={conditionalQuestion.questionId}
+                            question={conditionalQuestion.question}
+                            text={conditionalQuestion.text}
+                            postText={conditionalQuestion.postText}
+                            validateOn={conditionalQuestion.validateOn}
+                            validations={conditionalQuestion.validations}
+                            value={this.props.questionAnswers[conditionalQuestion.questionId]}
+                            input={conditionalQuestion.input}
+                            displayConfirmationNeed={conditionalQuestion.displayConfirmationNeed}
+                            classes={this.props.classes}
+                            renderError={this.props.renderError}
+                            questionAnswers={this.props.questionAnswers}
+                            validationErrors={this.props.validationErrors}
+                            onAnswerChange={this.props.onAnswerChange}
+                            onQuestionBlur={this.props.onQuestionBlur}
+                            onKeyDown={this.props.onKeyDown} />
+                );
+              }
+            }
+          )());
+      this.props.input.options
+          .filter(option => {
+            return typeof option.conditions !== 'undefined'
+                     && option.conditions.length > 0;
+          })
+          .forEach(option =>
+            [].forEach.bind(option.conditions, condition => {
+              conditionalAnswers[condition.questionId] = this.props.questionAnswers[condition.questionId];
+            }
+          )());
+      this.props.input.options
+          .filter(option => {
+            return typeof option.mappingConditions !== 'undefined'
+                     && option.mappingConditions.length > 0;
+          })
+          .forEach(option =>
+            [].forEach.bind(option.mappingConditions, condition => {
+              Object.keys(condition).forEach(questionId => {
+                mappingConditionalAnswers[questionId] = this.props.questionAnswers[questionId];
+              });
             }
           )());
     }
@@ -101,10 +168,31 @@ class Question extends React.Component {
                                    })
                              : [];
 
+    var validationInputErrors = typeof this.props.validationErrors[this.props.questionId] !== 'undefined'
+    ? this.props.validationErrors[this.props.questionId]
+          .map(error => {
+            return typeof this.props.renderError === 'function'
+                    ? this.props.renderError(error, this.props.questionId)
+                    : ' error';
+          })
+    : '';                             
+
     let labelId = `${this.props.questionId}-label`;
 
+	  var checked = (
+      this.props.input.type === 'checkboxInput' &&
+      typeof this.props.input.default !== 'undefined' &&
+      this.props.input.default === this.props.value
+    ) ? true : false;
+
+    var disconfirmation = (this.state.displayConfirmationNeed) ? 'd-none' : '';
+
+    function createMarkup(questionSetHtml) {
+      return {__html: questionSetHtml};
+    } 
+    
     return (
-      <div className={this.props.classes.question}>
+      <div className={`${this.props.classes.question} ${this.props.questionContainerClass} ${validationInputErrors} ${disconfirmation} `} id={`out-${this.props.questionId}`}>
         {!!this.props.question
           ? (
               <label className={this.props.classes.label}
@@ -115,26 +203,30 @@ class Question extends React.Component {
                    && this.props.input.required
                    ? this.props.renderRequiredAsterisk()
                    : undefined}
+        {!!this.props.text
+          ? (
+              <small className={this.props.classes.questionText} dangerouslySetInnerHTML={createMarkup(this.props.text)}>
+              </small>
+            )
+          : undefined}                   
               </label>
             )
           : undefined}
-        {!!this.props.text
-          ? (
-              <p className={this.props.classes.questionText}>
-                {this.props.text}
-              </p>
-            )
-          : undefined}
-        {validationErrors}
+
         <Input name={this.props.questionId}
                id={this.props.questionId}
                labelId={labelId}
                value={value}
+               defaultChecked={checked}
+               questionInputClass={this.props.input.questionInputClass}
                text={this.props.input.text}
                options={this.props.input.options}
+               conditionalAnswers={conditionalAnswers}
+               mappingConditionalAnswers={mappingConditionalAnswers}
                placeholder={this.props.input.placeholder}
                required={this.props.input.required}
                classes={this.props.classes}
+               questionAnswers={this.props.questionAnswers}
                onChange={this.handleInputChange.bind(this, this.props.questionId)}
                onBlur={this.handleInputBlur.bind(this, this.props.questionId)}
                onKeyDown={this.props.onKeyDown}
@@ -142,6 +234,7 @@ class Question extends React.Component {
                      ? this.props.input.props
                      : {})}
         />
+        {validationErrors}
         {!!this.props.postText
           ? (
               <p className={this.props.classes.questionPostText}>
@@ -173,6 +266,7 @@ class Question extends React.Component {
 Question.defaultProps = {
   questionSetId          : undefined,
   questionId             : undefined,
+  questionContainerClass : '',  
   question               : '',
   validateOn             : 'blur',
   validations            : [],
@@ -183,7 +277,8 @@ Question.defaultProps = {
     default     : undefined,
     type        : 'textInput',
     limit       : undefined,
-    placeholder : undefined
+    placeholder : undefined,
+    questionInputClass : '',
   },
   classes                : {},
   questionAnswers        : {},
@@ -192,7 +287,8 @@ Question.defaultProps = {
   onQuestionBlur         : () => {},
   onKeyDown              : () => {},
   renderError            : undefined,
-  renderRequiredAsterisk : undefined
+  renderRequiredAsterisk : undefined,
+  displayConfirmationNeed: false
 };
 
 module.exports = Question;

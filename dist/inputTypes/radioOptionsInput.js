@@ -31,30 +31,43 @@ var RadioOptionsInput = (function (_React$Component) {
       }, this.props.onChange.bind(null, value));
     }
   }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.handleChange(this.state.value);
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (this.props.value !== nextProps.value) {
+        this.setState({ value: nextProps.value }, this.props.onChange.bind(null, nextProps.value));
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this = this;
 
       return React.createElement(
         'ul',
-        { className: this.props.classes.radioList },
-        this.props.options.map(function (opt) {
+        { className: this.props.classes.radioList, id: this.props.name },
+        this.props.options.map(function (opt, ind) {
           return React.createElement(
             'li',
             { key: opt.value,
               className: _this.props.classes.radioListItem },
+            React.createElement('input', { type: 'radio',
+              name: _this.props.name,
+              id: _this.props.labelId + '-' + ind,
+              'aria-labelledby': _this.props.labelId,
+              checked: _this.state.value == opt.value,
+              className: _this.props.classes.radio,
+              required: _this.props.required ? 'required' : undefined,
+              onChange: _this.handleChange.bind(_this, opt.value),
+              onBlur: _this.props.onBlur.bind(null, _this.state.value) }),
             React.createElement(
               'label',
               { className: _this.props.classes.radioLabel,
-                id: _this.props.labelId },
-              React.createElement('input', { type: 'radio',
-                name: _this.props.name,
-                'aria-labelledby': _this.props.labelId,
-                checked: _this.state.value == opt.value,
-                className: _this.props.classes.radio,
-                required: _this.props.required ? 'required' : undefined,
-                onChange: _this.handleChange.bind(_this, opt.value),
-                onBlur: _this.props.onBlur.bind(null, _this.state.value) }),
+                id: _this.props.labelId, 'for': _this.props.labelId + '-' + ind },
               opt.text
             )
           );

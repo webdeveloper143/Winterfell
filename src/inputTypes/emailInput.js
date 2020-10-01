@@ -16,6 +16,12 @@ class EmailInput extends React.Component {
     }, this.props.onChange.bind(null, e.target.value));
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.value !== nextProps.value) {
+      this.setState({ value: nextProps.value }, this.props.onChange.bind(null, nextProps.value));
+    }
+  }
+
   render() {
     return (
       <input type="email"

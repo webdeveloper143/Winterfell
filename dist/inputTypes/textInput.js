@@ -17,7 +17,6 @@ var TextInput = (function (_React$Component) {
     _classCallCheck(this, TextInput);
 
     _get(Object.getPrototypeOf(TextInput.prototype), 'constructor', this).call(this, props);
-
     this.state = {
       value: this.props.value
     };
@@ -26,9 +25,17 @@ var TextInput = (function (_React$Component) {
   _createClass(TextInput, [{
     key: 'handleChange',
     value: function handleChange(e) {
+      var value = e.target.value.trim();
       this.setState({
         value: e.target.value
-      }, this.props.onChange.bind(null, e.target.value));
+      }, this.props.onChange.bind(null, value));
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (this.props.value !== nextProps.value) {
+        this.setState({ value: nextProps.value }, this.props.onChange.bind(null, nextProps.value));
+      }
     }
   }, {
     key: 'render',
@@ -37,12 +44,12 @@ var TextInput = (function (_React$Component) {
         name: this.props.name,
         id: this.props.id,
         'aria-labelledby': this.props.labelId,
-        className: this.props.classes.input,
+        className: this.props.classes.input + this.props.questionInputClass,
         placeholder: this.props.placeholder,
         value: this.state.value,
         required: this.props.required ? 'required' : undefined,
         onChange: this.handleChange.bind(this),
-        onBlur: this.props.onBlur.bind(null, this.state.value),
+        onBlur: this.props.onBlur.bind(null, this.state.value.trim()),
         onKeyDown: this.props.onKeyDown });
     }
   }]);
