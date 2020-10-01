@@ -197,7 +197,7 @@ var FileInput = (function (_React$Component) {
         message = React.createElement(
           'span',
           null,
-          'Image upload failed'
+          'Image upload failed, image size exceeds 2MB limit'
         );
         progressBar.backgroundColor = 'red';
       }

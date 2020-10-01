@@ -170,7 +170,7 @@ class FileInput extends React.Component {
       message = <span>Successfully uploaded</span>;
     }
     if (this.state.failed === 1) {
-      message = <span>Image upload failed</span>;
+      message = <span>Image upload failed, image size exceeds 2MB limit</span>;
       progressBar.backgroundColor = 'red';
     }
     let oldFile = false ;
