@@ -42,7 +42,7 @@ class QuestionSet extends React.Component {
           }
         });
         if (isSatisfied) {
-          mappingConditionalItems.push(
+          return (
             <Question key={question.questionId}
                       questionSetId={this.props.id}
                       questionContainerClass={question.questionContainerClass}
