@@ -52,26 +52,28 @@ var QuestionSet = (function (_React$Component) {
               }
             });
             if (isSatisfied) {
-              mappingConditionalItems.push(React.createElement(Question, { key: question.questionId,
-                questionSetId: _this.props.id,
-                questionContainerClass: question.questionContainerClass,
-                questionId: question.questionId,
-                question: question.question,
-                validateOn: question.validateOn,
-                validations: question.validations,
-                text: question.text,
-                postText: question.postText,
-                value: _this.props.questionAnswers[question.questionId],
-                input: question.input,
-                displayConfirmationNeed: question.displayConfirmationNeed,
-                classes: _this.props.classes,
-                renderError: _this.props.renderError,
-                renderRequiredAsterisk: _this.props.renderRequiredAsterisk,
-                questionAnswers: _this.props.questionAnswers,
-                validationErrors: _this.props.validationErrors,
-                onAnswerChange: _this.props.onAnswerChange,
-                onQuestionBlur: _this.props.onQuestionBlur,
-                onKeyDown: _this.props.onKeyDown }));
+              return {
+                v: React.createElement(Question, { key: question.questionId,
+                  questionSetId: _this.props.id,
+                  questionContainerClass: question.questionContainerClass,
+                  questionId: question.questionId,
+                  question: question.question,
+                  validateOn: question.validateOn,
+                  validations: question.validations,
+                  text: question.text,
+                  postText: question.postText,
+                  value: _this.props.questionAnswers[question.questionId],
+                  input: question.input,
+                  displayConfirmationNeed: question.displayConfirmationNeed,
+                  classes: _this.props.classes,
+                  renderError: _this.props.renderError,
+                  renderRequiredAsterisk: _this.props.renderRequiredAsterisk,
+                  questionAnswers: _this.props.questionAnswers,
+                  validationErrors: _this.props.validationErrors,
+                  onAnswerChange: _this.props.onAnswerChange,
+                  onQuestionBlur: _this.props.onQuestionBlur,
+                  onKeyDown: _this.props.onKeyDown })
+              };
             }
             return {
               v: ''
